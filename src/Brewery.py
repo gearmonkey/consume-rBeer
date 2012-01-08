@@ -45,7 +45,6 @@ class Brewery:
 		self.country = country
 		self.url = url
 		self.phone = phone
-		self.img_url = img_url
 		self.fb_url = fb_url
 		self.beers = beers
 		
@@ -69,7 +68,6 @@ class Brewery:
 		self.country = Brewery.regexes['country'].findall(raw_page)[1].strip()
 		self.url = Brewery.regexes['url'].findall(raw_page)[0].strip()
 		self.phone = Brewery.regexes['phone'].findall(raw_page)[0].strip()
-		self.img_url = Brewery.regexes['img_url'].findall(raw_page)
 		try:
 			self.fb_url = Brewery.regexes['fb_url'].findall(raw_page)[0]
 		except IndexError:
