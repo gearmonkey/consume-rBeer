@@ -81,9 +81,10 @@ class Brewery:
 			(stuff)
 		create an instance of the Beer class for & with each beer_tuple
 		append the resulting instance to self.beer
-		for now just return the the list of tuples, since the beers class is a stub
+		for now just return the mapped list of tuples, since the beers class is a stub
 		"""
-		return beer_tuples
+		#mapping removes the formatting tag groups from each beer tuple
+		return [(b[0],b[1],b[3],b[6],b[9],b[12],b[15]) for b in beer_tuples]
 class BreweryTests(unittest.TestCase):
 	
 	def setUp(self):
