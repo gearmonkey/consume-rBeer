@@ -13,14 +13,14 @@ import unittest
 
 
 class User:
-	def __init__(self):
-		pass
+    def __init__(self):
+        pass
 
 
 class UserTests(unittest.TestCase):
-	def setUp(self):
-		pass
+    def setUp(self):
+        pass
 
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()
