@@ -32,7 +32,7 @@ class Brewery:
 			'phone': re.compile('<IMG SRC="/images/phone.gif".*?>(.*?)<BR>'),
 			'fb_url': re.compile('\|</font> Facebook: <a href="(.*?)" target="_blank">.*?</a><BR>'), 
 			#the beer list regex will only pick up beers with all the stats, needs to be tweaked
-			'beers': re.compile('<TR class=dataTableRowAlternate><TD width="65%" style="border-left: 0px solid #d7d7d7;"><font size=4>&nbsp;</font><A HREF="/beer/.*?/(?P<beerID>\d*?)/">(.*?)</A> &nbsp; </TD><TD valign=top>.*?</TD><TD align="right"><font color=#999999>(.*?)</font>&nbsp;&nbsp;</TD><TD><font color=#999999>&nbsp;&nbsp;(.*?)</font>&nbsp;&nbsp;</TD><TD align=center><b>(\d*?)</b>&nbsp;&nbsp;</TD><TD align=center><b>(\d*?)</b>&nbsp;&nbsp;</TD><TD align="right"><font color=#999999>(\d*?)</font>&nbsp;&nbsp;</TD>'), 	} 
+			'beers': re.compile('<TR class=dataTableRow.*?><TD width="65%" style="border-left: 0px solid #d7d7d7;"><font size=4>&nbsp;</font><A HREF="/beer/.*?/(?P<beerID>\d*?)/">(.*?)</A> &nbsp; </TD><TD valign=top>.*?</TD><TD align="right"><font color=#999999>?(.*?)</font>&nbsp;&nbsp;?</TD><TD><font color=#999999>&nbsp;&nbsp;(.*?)</font>&nbsp;&nbsp;</TD><TD align=center><b>(\d*?)</b>&nbsp;&nbsp;</TD><TD align=center><b>(\d*?)</b>&nbsp;&nbsp;</TD><TD align="right"><font color=#999999>(\d*?)</font>&nbsp;&nbsp;</TD>')} 
 	
 	def __init__(self, name=None, full_address=None, region=None,
 				country=None, url=None, source_url=None, phone=None, 
