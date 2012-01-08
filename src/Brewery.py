@@ -39,7 +39,7 @@ class Brewery:
 				rb_id=None, img_url=None, fb_url=None, beers=[]):
 		"""
 		provides a direct means of creating a brewery instance.
-		"""
+        """
 		self.display_name = name 
 		self.full_address = full_address
 		self.region = region
