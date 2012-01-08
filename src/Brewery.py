@@ -15,7 +15,7 @@ import re
 import logging
 
 
-from Beer import beer
+from Beer import Beer
 
 class Brewery:
 	"""
@@ -65,7 +65,7 @@ class Brewery:
 		except IndexError:
 			#if no region, leave it as None
 			logging.warning('Unable to parse a region for {0}'.format(self.display_name))
-		self.country = Brewery.regexes['country'].findall(raw_page)[1].strip()
+		self.country = Brewery.regexes['country'].findall(raw_page)[0][1].strip()
 		self.url = Brewery.regexes['url'].findall(raw_page)[0].strip()
 		self.phone = Brewery.regexes['phone'].findall(raw_page)[0].strip()
 		try:
