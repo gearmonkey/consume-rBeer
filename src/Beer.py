@@ -13,9 +13,14 @@ import unittest
 
 
 class Beer:
-    def __init__(self):
-        pass
-
+    """
+    metadata around a beer, and it's ratings
+    """
+    def __init__(self, beer_uid, name=None, abv=None, mean_score=None, overall_percentile=None,
+                style_percentile=None, total_ratings=None, Brewery_id=None):
+        self.uid = beer_uid
+        
+        
 
 class BeerTests(unittest.TestCase):
     def setUp(self):

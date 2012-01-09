@@ -85,6 +85,7 @@ class Brewery:
 		"""
 		#mapping removes the formatting tag groups from each beer tuple
 		return [(b[0],b[1],b[3],b[6],b[9],b[12],b[15]) for b in beer_tuples]
+		
 class BreweryTests(unittest.TestCase):
 	
 	def setUp(self):
