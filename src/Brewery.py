@@ -94,10 +94,10 @@ class Brewery:
             (stuff)
         create an instance of the Beer class for & with each beer_tuple
         append the resulting instance to self.beer
-        returns a generator that creates these class instances on demand
+        returns a list of these instances 
         """
         #mapping removes the formatting tag groups from each beer tuple
-        return (Beer(b[0],b[1],b[3],b[6],b[9],b[12],b[15], self.rb_id) for b in beer_tuples)
+        return [Beer(b[0],b[1],b[3],b[6],b[9],b[12],b[15], self.rb_id) for b in beer_tuples]
         
 class BreweryTests(unittest.TestCase):
     
