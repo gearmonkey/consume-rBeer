@@ -23,6 +23,7 @@ class Brewery:
 	use via ratebeer scraping, creation of an instance should occur via the 
 	static Brewery.parse
 	"""
+	brewery_uri = "http://ratebeer.com/brewers/b/{brewery_id}"
 	regexes = {'name': re.compile(r'<h1>(.*?)</h1><span class=beerfoot>'),
 			'type': re.compile(r'<font color="#666666">Type:(.*?)</font><br>'),
 			'full_address': re.compile(r'<br><br><a href =".*?" target="new"><b>(.*?)<BR>(.*?)</b> <img'),
