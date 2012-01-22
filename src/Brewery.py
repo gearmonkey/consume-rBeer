@@ -52,7 +52,12 @@ class Brewery:
 		#these will typically be filled in by the instaciating code directly
 		self.source_url = source_url
 		self.rb_id = rb_id
-
+    def fetch_page(self):
+        """
+        returns the raw page source for a brewery page
+        """
+        return urllib2.urlopen(Brewery.brewery_uri.format(brewery_id=self.rb_id)).read()
+    
 	def parse(self, raw_page):
 		"""
 		uses the html string (should be text from a brewery page on 
@@ -81,10 +86,10 @@ class Brewery:
 			(stuff)
 		create an instance of the Beer class for & with each beer_tuple
 		append the resulting instance to self.beer
-		for now just return the mapped list of tuples, since the beers class is a stub
+		returns a generator that creates these class instances on demand
 		"""
 		#mapping removes the formatting tag groups from each beer tuple
-		return [(b[0],b[1],b[3],b[6],b[9],b[12],b[15]) for b in beer_tuples]
+		return (Beer(b[0],b[1],b[3],b[6],b[9],b[12],b[15], self.rb_id) for b in beer_tuples)
 		
 class BreweryTests(unittest.TestCase):
 	
