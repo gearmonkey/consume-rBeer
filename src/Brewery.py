@@ -61,11 +61,13 @@ class Brewery:
         """
         return urllib2.urlopen(Brewery.brewery_uri.format(brewery_id=self.rb_id)).read()
     
-    def parse(self, raw_page):
+    def parse(self, raw_page=None):
         """
         uses the html string (should be text from a brewery page on 
         rate beer) raw_page to populate brewery attributes
         """
+        if not raw_page:
+            raw_page = self.fetch_page()
         self.display_name = Brewery.regexes['name'].findall(raw_page)[0].strip()
         self.brewer_type = Brewery.regexes['type'].findall(raw_page)[0].strip()
         self.full_address = ','.join(Brewery.regexes['full_address'].findall(raw_page)[0])
