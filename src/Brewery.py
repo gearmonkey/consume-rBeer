@@ -40,16 +40,11 @@ class Brewery:
         """
         provides a direct means of creating a brewery instance.
         """
-        if name:
-            self.display_name = unicode(name , 'utf8')
-        if full_address:
-            self.full_address = unicode(full_address, 'utf8')
-        if region:
-            self.region = unicode(region, 'utf8')
-        if country:
-            self.country = unicode(country, 'utf8')
-        if url:
-            self.url = unicode(url, 'utf8')
+        self.display_name = name
+        self.full_address = full_address
+        self.region = region
+        self.country = country
+        self.url = url
         self.phone = phone 
         self.fb_url = fb_url
         self.beers = beers

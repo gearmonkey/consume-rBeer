@@ -25,8 +25,7 @@ class Beer:
     def __init__(self, beer_uid, name=None, abv=None, mean_score=None, overall_percentile=None,
                 style_percentile=None, total_ratings=None, brewery_id=None):
         self.uid = int(beer_uid)
-        if name:
-            self.name = unicode(name, 'utf8')
+        self.name = name
         if abv:
             self.abv = float(abv)
         if mean_score:
