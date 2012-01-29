@@ -22,6 +22,7 @@ class Beer:
     beer_uri = "http://www.ratebeer.com/beer/beer_name/{beer_id}/"
     ratings_uri = "http://www.ratebeer.com/Ratings-Who.asp?BeerID={beer_id}"
     ratings_regex = re.compile(r'<a href="/ViewUser\.asp\?UserID=(?P<userid>\d*)" target="_blank">(.*?)</a> \(<i><a href="/beer/beer_name/(\d*)/(?P=userid)/" target="_blank">Rating - (.*?)</a></i>\)')
+    name_regex = re.compile(r'<TITLE>(.*)</TITLE>')
     def __init__(self, beer_uid, name=None, abv=None, mean_score=None, overall_percentile=None,
                 style_percentile=None, total_ratings=None, brewery_id=None):
         self.uid = int(beer_uid)
@@ -51,7 +52,9 @@ class Beer:
         """
         if not raw_page:
             raw_page = self.fetch_beer_page()
-        pass
+        results = Beer.name_regex.findall(raw_page);
+        if len(results) > 0:
+            self.name = results[0]
         
     def fetch_rating_page(self):
         """
@@ -74,7 +77,7 @@ class Beer:
             raw_page = self.fetch_rating_page()
         self.ratings = [(username, int(userID), float(beerRating)) 
                         for (userID, username, beerID, beerRating) in Beer.ratings_regex.findall(raw_page)]
-
+        
 class BeerTests(unittest.TestCase):
     def setUp(self):
         pass
