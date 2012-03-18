@@ -29,7 +29,7 @@ class Review:
         date (datetime.date)
         comment (str) (unicode optimal)
         """
-        self.beer_uid = kwargs.get("beer_uid"):
+        self.beer_uid = kwargs.get("beer_uid")
         self.user_uid = kwargs.get("user_uid")
         self.brewery_uid = kwargs.get("brewery_uid")
         self.topline_score = kwargs.get("topline_score")
