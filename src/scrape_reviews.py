@@ -4,7 +4,7 @@ import logging
 
 import Beer
 
-NUM_BEERS = 168719 # total number of beers as of 13-03-2012 @2200GMT
+NUM_BEERS = 25 #168719 # total number of beers as of 13-03-2012 @2200GMT
 REPORT_EVERY = 1000
 
 logging.basicConfig(level=logging.DEBUG, 
@@ -25,12 +25,16 @@ taste_score integer, palete_score integer, overall_score integer, location text,
 user_location text, date integer, comment text)''')
 conn.commit()
 
-for beer_id in [138065]: #xrange(NUM_BEERs):
+for beer_id in xrange(1, NUM_BEERS):
     logging.debug('fetching beer {0}'.format(beer_id))
     if beer_id%REPORT_EVERY == 0:
         logging.info('scrape is {0}% done.'.format(100*(float(beer_id)/NUM_BEERS)))
     a_beer = Beer.Beer(beer_id)
-    a_beer.page = a_beer.fetch_beer_page()
+    try:
+        a_beer.page = a_beer.fetch_beer_page()
+    except IndexError:
+        logging.error('beer {0} doesn\'t work right, moving on'.format(beer_id))
+        continue
     a_beer.parse_metadata(a_beer.page)
     c.execute('''insert into beer values (?,?,?,?,?,?,?,?,?,?)''', [a_beer.uid,
                                                                     a_beer.name.decode('latin-1'),

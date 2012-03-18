@@ -66,19 +66,36 @@ class Beer(object):
     def parse_metadata(self, raw_page=None):
         """
         scrapes the beer metadata out of a beer's raw_page string
-        Note! overrides existing metadata
+        Note! overrides existing metadata, 
+            catches non-existance for abv and mean score as these aren't on every beer page
         """
         if not raw_page:
             raw_page = self.fetch_beer_page()
         self.name = Beer.get_metadata['name'].findall(raw_page)[0]
-        self.abv = float(Beer.get_metadata['abv'].findall(raw_page)[0])
-        self.mean_score = float(Beer.get_metadata['mean'].findall(raw_page)[0])
-        self.weighted_score = float(Beer.get_metadata['weighted_score'].findall(raw_page)[0])
+        try:
+            self.abv = float(Beer.get_metadata['abv'].findall(raw_page)[0])
+        except IndexError:
+            logging.warning("unable to find abv for beer {0}".format(self.uid))
+            self.abv = None
+        try:
+            self.mean_score = float(Beer.get_metadata['mean'].findall(raw_page)[0])
+        except IndexError:
+            logging.warning("unable to find mean score for beer {0}".format(self.uid))
+            self.mean_score = None
+        try:
+            self.weighted_score = float(Beer.get_metadata['weighted_score'].findall(raw_page)[0])
+        except IndexError:
+            logging.warning("unable to find weighted score for beer {0}".format(self.uid))
+            self.weighted_score = None
         self.overall_percentile=float(Beer.get_metadata['overall_percentile'].findall(raw_page)[0])
         self.style_percentile=float(Beer.get_metadata['style_percentile'].findall(raw_page)[0])
         self.total_ratings=int(Beer.get_metadata['total_ratings'].findall(raw_page)[0])
         self.brewery_id=int(Beer.get_metadata['brewery_and_style'].findall(raw_page)[0][0])
-        self.style_id=int(Beer.get_metadata['brewery_and_style'].findall(raw_page)[0][1])
+        try:
+            self.style_id=int(Beer.get_metadata['brewery_and_style'].findall(raw_page)[0][1])
+        except IndexError:
+            logging.warning("unable to find style_id for beer {0}".format(self.uid))
+            self.style_id  = None
     def fetch_rating_page(self):
         """
         returns the html string of the minimized rating list
