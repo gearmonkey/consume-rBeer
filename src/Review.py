@@ -24,22 +24,24 @@ class Review:
         taste_score (int [0,10])
         palete_score (int [0,5])
         overall_score (int [0,20])
-        loc (str) (unicode optimal)
+        loc (str) (unicode optimal) (location beer was consumed)
+        user_loc (str) (unicode optimal) (location user is based)
         date (datetime.date)
         comment (str) (unicode optimal)
         """
-        self.beer_uid = kwargs.get(beer_uid):
-        self.user_uid = kwargs.get(user_uid)
-        self.brewery_uid = kwargs.get(brewery_uid)
-        self.topline_score = kwargs.get(topline_score)
-        self.aroma_score = kwargs.get(aroma_score)
-        self.apperance_score = kwargs.get(apperance_score)
-        self.taste_score = kwargs.get(taste_score)
-        self.palete_score = kwargs.get(palete_score)
-        self.overall_score = kwargs.get(overall_score)
-        self.loc = kwargs.get(loc)
-        self.date = kwargs.get(date)
-        self.comment = kwargs.get(comment)
+        self.beer_uid = kwargs.get("beer_uid"):
+        self.user_uid = kwargs.get("user_uid")
+        self.brewery_uid = kwargs.get("brewery_uid")
+        self.topline_score = kwargs.get("topline_score")
+        self.aroma_score = kwargs.get("aroma_score")
+        self.apperance_score = kwargs.get("apperance_score")
+        self.taste_score = kwargs.get("taste_score")
+        self.palete_score = kwargs.get("palete_score")
+        self.overall_score = kwargs.get("overall_score")
+        self.loc = kwargs.get("loc")
+        self.user_loc = kwargs.get("user_loc")
+        self.date = kwargs.get("date")
+        self.comment = kwargs.get("comment")
 
 
 class ReviewTests(unittest.TestCase):
