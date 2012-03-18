@@ -13,7 +13,9 @@ import unittest
 import urllib2
 import re
 import logging
+import datetime
 
+from Review import Review
 
 class Beer(object):
     """
@@ -22,6 +24,9 @@ class Beer(object):
     beer_uri = "http://www.ratebeer.com/beer/beer_name/{beer_id}/"
     ratings_uri = "http://www.ratebeer.com/Ratings-Who.asp?BeerID={beer_id}"
     ratings_regex = re.compile(r'<a href="/ViewUser\.asp\?UserID=(?P<userid>\d*)" target="_blank">(.*?)</a> \(<i><a href="/beer/beer_name/(\d*)/(?P=userid)/" target="_blank">Rating - (.*?)</a></i>\)')
+    
+    reviews_regex = re.compile(r'<IMG style="max-width: 60px; max-height: 60px; height: auto; width: auto;" width= "60" src="/userpics/(?P<username>\S*?)\.jpg" class="curvy"></div><div style="display:inline; padding: 0px 0px; font-size: 24px; font-weight: bold; color: #036;" title="(?P<rating>\d\.?\d?) out of 5\.0">(?P=rating)</div><strong>&nbsp;&nbsp;<small> AROMA </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> APPEARANCE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> TASTE </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> PALATE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> OVERALL </small><big style="color: #999;">(\d\d?)/20</big></strong></div><small style="color: #666666; font-size: 12px; font-weight: bold;"><A HREF="/user/(\d*?)/">(?P=username)&nbsp;\(\d*?\)</A></I> - (.*?) - (.*?)</small><BR><div style="padding: 20px 10px 20px 0px; border-bottom: 1px solid #e0e0e0;">(.*?)</div>', flags=re.DOTALL)
+    
     get_metadata = {'name': re.compile(r'<div class="user-header"><h1>(.*?)</h1></div>'),
                     'abv': re.compile(r'<abbr title="Alcohol By Volume">ABV</abbr>: <big style="color: #777;"><strong>(.*?)%</strong></big>'),
                     'mean': re.compile(r'MEAN: <big style="color: #777;"><strong>(\d\.?\d?)/5\.0</strong></big>') ,
@@ -49,11 +54,14 @@ class Beer(object):
     def __str__(self):
         return "'{0}' from {1}".format(self.name, Beer.beer_uri.format(beer_id=self.uid))
     
-    def fetch_beer_page(self):
+    def fetch_beer_page(self, page=None):
         """
         returns html string of the beer page
         """
-        return urllib2.urlopen(Beer.beer_uri.format(beer_id=self.uid)).read()
+        if page:
+            return urllib2.urlopen(Beer.beer_uri.format(beer_id=self.uid)+'1/{0}/'.format(page)).read()
+        else:
+            return urllib2.urlopen(Beer.beer_uri.format(beer_id=self.uid)).read()
     
     def parse_metadata(self, raw_page=None):
         """
@@ -95,8 +103,27 @@ class Beer(object):
 
     def scrape_user_comment_list(self, raw_page=None):
         if not raw_page:
-            raw_page = self.fetch_rating_page()
+            raw_page = self.fetch_beer_page()
         self.reviews = []
+        try:
+            self.total_ratings
+        except AttributeError:
+            self.parse_metadata(raw_page)
+        page = 1
+        while len(self.reviews) < self.total_ratings:
+            if page != 1:
+                raw_page = self.fetch_beer_page(page=page)
+            self.reviews +=[Review(beer_uid=self.uid, user_uid=int(user_id),
+                                    brewery_uid =self.brewery_id, topline_score=float(topline_score),
+                                    aroma_score=int(aroma), apperance_score=int(apperance),
+                                    taste_score=int(taste), palete_score=int(palete),
+                                    overall_score=int(overall), user_loc=user_loc,
+                                    date = datetime.datetime.strptime(date_str, '%b %d, %Y').date(),
+                                    comment = comment) for (username, topline_score, aroma, apperance, 
+                                                        taste, palete, overall, user_id, user_loc, 
+                                                        date_str, comment) in \
+                                                                Beer.reviews_regex.findall(raw_page)]
+            page += 1
         
 class BeerTests(unittest.TestCase):
     def setUp(self):
