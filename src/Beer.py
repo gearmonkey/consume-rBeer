@@ -89,8 +89,16 @@ class Beer(object):
         except IndexError:
             logging.warning("unable to find weighted score for beer {0}".format(self.uid))
             self.weighted_score = None
-        self.overall_percentile=float(Beer.get_metadata['overall_percentile'].findall(raw_page)[0])
-        self.style_percentile=float(Beer.get_metadata['style_percentile'].findall(raw_page)[0])
+        try:
+            self.overall_percentile=float(Beer.get_metadata['overall_percentile'].findall(raw_page)[0])
+        except IndexError:
+            logging.warning("unable to find overall percentile for beer {0}".format(self.uid))
+            self.overall_percentile = None
+        try:
+            self.style_percentile=float(Beer.get_metadata['style_percentile'].findall(raw_page)[0])
+        except IndexError:
+            logging.warning("unable to find style_percentile for beer {0}".format(self.uid))
+            self.style_percentile = None
         self.total_ratings=int(Beer.get_metadata['total_ratings'].findall(raw_page)[0])
         self.brewery_id=int(Beer.get_metadata['brewery_and_style'].findall(raw_page)[0][0])
         try:
