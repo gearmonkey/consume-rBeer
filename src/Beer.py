@@ -59,7 +59,7 @@ class Beer(object):
         returns html string of the beer page
         """
         if page:
-            logging.debug('opening ' + Beer.beer_uri.format(beer_id=self.uid)+'1/{0}/'.format(page))
+            #logging.debug('opening ' + Beer.beer_uri.format(beer_id=self.uid)+'1/{0}/'.format(page))
             return urllib2.urlopen(Beer.beer_uri.format(beer_id=self.uid)+'1/{0}/'.format(page)).read()
         else:
             logging.debug('opening ' + Beer.beer_uri.format(beer_id=self.uid))

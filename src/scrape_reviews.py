@@ -4,7 +4,7 @@ import logging
 
 import Beer
 
-NUM_BEERS = 10 #168719 # total number of beers as of 13-03-2012 @2200GMT
+NUM_BEERS = 168719 # total number of beers as of 13-03-2012 @2200GMT
 REPORT_EVERY = 1000
 
 logging.basicConfig(level=logging.DEBUG, 
