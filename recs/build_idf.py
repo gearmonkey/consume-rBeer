@@ -9,12 +9,12 @@ conn = sqlite3.connect('../rbeer.db')
 c = conn.cursor()
 
 try:
-    bottom_idx = sys.argv[1]
+    bottom_idx = int(sys.argv[1])
     print "using", bottom_idx, "as start point"
 except IndexError:
     bottom_idx = None
 try:
-    top_idx = sys.argv[2]
+    top_idx = int(sys.argv[2])
     print "using", top_idx, "as end point"
 except IndexError:
     top_idx = None
@@ -42,10 +42,10 @@ c.execute("SELECT id, brewery FROM beer")
 idx = 0 #don't want to unwrap the generator so we'll idex this way
 worked = 0
 for beer_id, name in c.fetchall():
-    if bottom_idx and idx<bottom_idx:
+    if bottom_idx!=None and idx<bottom_idx:
         idx+=1
         continue
-    if top_idx and idx>top_idx:
+    if top_idx!=None and idx>top_idx:
         break
     if idx%1000 == 0:
         print """*-*-*-* Finished {0}% of the processing.""".format(float(idx)/total_beers)
