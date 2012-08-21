@@ -42,7 +42,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         infile, outfile = argv[1:]
-    except getopt.error, msg:
+    except Exception, msg:
         raise Usage(msg)
     with codecs.open(infile, 'r', encoding='utf-8') as rh:
         term_counts = [(line.split(':')[0].strip(), int(line.split(':')[1].strip())) for line in rh.readlines()\

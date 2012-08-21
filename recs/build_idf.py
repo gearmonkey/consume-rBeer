@@ -1,13 +1,37 @@
 import sqlite3
 import logging
 import sys
+import StringIO
 
 from tfidf import TfIdf
 
 
-conn = sqlite3.connect('../rbeer.db')
-c = conn.cursor()
 
+conn = sqlite3.connect('../rbeer.db')
+args = sys.argv
+if "--in-mem" in args or "-m" in args:
+    #pop the arg
+    if "--in-mem" in args:
+        args.pop(args.index("--in-mem"))
+    if "-m" in args:
+        args.pop(args.index("-m"))
+    print "shifting db to memory"
+    # Read database to tempfile
+    tempfile = StringIO.StringIO()
+    for line in conn.iterdump():
+        tempfile.write(u'{0}\n'.format(line))
+    conn.close()
+    tempfile.seek(0)
+    
+    # Create a database in memory and import from tempfile
+    conn = sqlite3.connect(":memory:")
+    conn.cursor().executescript(tempfile.read())
+    conn.commit()
+    conn.row_factory = sqlite3.Row
+    tempfile.close()
+    
+c = conn.cursor()
+    
 try:
     bottom_idx = int(sys.argv[1])
     print "using", bottom_idx, "as start point"
