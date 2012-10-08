@@ -44,7 +44,7 @@ with open(save_file, 'w') as wh:
     wh.write('0\n')
 
 comment_model = TfIdf(corpus_filename="idf_model.txt", stopword_filename="curated_stopwords.txt", 
-                        DEFAULT_IDF=None)
+                        DEFAULT_IDF=1.5)
 
 #find the number of beers for progress indication
 c.execute("SELECT id from beer")
@@ -74,7 +74,7 @@ for beer_id, name in c.fetchall():
     comments = ''
     for comment, in c.fetchall():
         comments += comment
-    top_100[int(beer_id)] = comment_model.get_doc_keywords(comments)
+    top_100[int(beer_id)] = [(term, weight) for (term, weight) in comment_model.get_doc_keywords(comments)[:100] if weight > 0.00000001 ]
     print "dealt with", name
     worked += 1
 print "sucessfully dealt with", worked, "beers."
