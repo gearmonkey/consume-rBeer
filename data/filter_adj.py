@@ -28,7 +28,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
     parser = argparse.ArgumentParser(description='Populates the adjective only top terms, from the top terms column, for every beer')
-    parser.add_argument('tfidf', dest='tfidf_path', help='pickle of tfidf data')
+    parser.add_argument('tfidf_path', help='pickle of tfidf data')
     parser.add_argument('database', help='a sqlite3 db of rbeer data')
     parser.add_argument('filtered_terms', help='pickled output of filtered tfidf data')
     
@@ -37,13 +37,13 @@ def main(argv=None):
     conn = sqlite3.connect(args.database)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    conn_out = sqlite3.connect(':memory:') #the db for new tags
+    conn_out = sqlite3.connect('temp.db') #the db for new tags
     tagdb = conn_out.cursor()
     tagdb.execute('CREATE TABLE filtered_tags (beer_id integer primary key, tags text)')
     
     c.execute('SELECT count(*) from beer')
     to_insert = c.fetchone()['count(*)']
-    print to_insert, 'beers from',args.database ,'will be filtered, filtered terms saved in', args.filtered
+    print to_insert, 'beers from',args.database ,'will be filtered, filtered terms saved in', args.filtered_terms
 
     c.execute('SELECT * from beer')
     with open(args.tfidf_path) as rh:
@@ -63,11 +63,12 @@ def main(argv=None):
         filtered_tags = [tags[[a[0] for a in tags].index(t)] for t in tokens_with_pos]
         tagdb.execute('INSERT INTO filtered_tags (beer_id, tags) VALUES (?,?)', 
                       (beer_id, json.dumps(filtered_tags)))
+        conn_out.commit()
     del(top_terms)
-    with open(args.filtered, 'w') as wh:
+    with open(args.filtered_terms, 'w') as wh:
         filtered_tags = {}
         for beer_id, serialized_tags in conn_out.execute('SELECT beer_id, tags FROM filtered_tags'):
-            filtered_tags[beer_id] = json.loads(tags)
+            filtered_tags[beer_id] = json.loads(serialized_tags)
         cPickle.dump(filtered_tags, wh)
 
             
