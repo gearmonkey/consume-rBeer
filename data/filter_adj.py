@@ -18,6 +18,7 @@ import nltk, nltk.tokenize
 
 
 
+
 class Usage(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -57,10 +58,11 @@ def main(argv=None):
             print 'no name found for beer id {0}, continueing...'.format(beer_id)
             name = ''
         name_tokens = [t.lower() for t in nltk.tokenize.word_tokenize(name.replace('.', ''))]
-
+        
+        #the gt 2 filter should really be in the 
         tokens_with_pos= [x[0] for x in nltk.pos_tag([tag for (tag,w) in tags]) \
-                            if x[1] in ('NN', 'JJ') and x[0] not in name_tokens]
-        filtered_tags = [tags[[a[0] for a in tags].index(t)] for t in tokens_with_pos]
+                            if x[1] in ('NN', 'JJ') and x[0] not in name_tokens and len(x[0])>2] 
+        filtered_tags = [tags[[a[0] for a in tags if len(a[0])].index(t)] for t in tokens_with_pos]
         tagdb.execute('INSERT INTO filtered_tags (beer_id, tags) VALUES (?,?)', 
                       (beer_id, json.dumps(filtered_tags)))
         conn_out.commit()
