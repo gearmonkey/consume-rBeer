@@ -56,7 +56,7 @@ def main(argv=None):
         rbeer_id = this_beer.pop('id')
         this_beer['ratebeer_id'] = rbeer_id
         try:
-            this_beer['topterms'] = top_terms[int(row['id'])]
+            this_beer['topterms'] = [t for t in top_terms[int(row['id'])] if len(t[0]) > 2 and '@' not in t[0]]
         except KeyError:
             print 'no top terms for', row['name']
             this_beer['topterms'] = []
