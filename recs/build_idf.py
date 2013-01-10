@@ -5,10 +5,30 @@ import StringIO
 
 from tfidf import TfIdf
 
-
-
-conn = sqlite3.connect('../rbeer.db')
+conn = sqlite3.connect('../data/rbeer.db')
 args = sys.argv
+
+if "-s" in args:
+    args.pop(args.index("-s"))
+    print "Only correctly spelled english words to be used in IDF"
+    import re
+    from nltk.corpus import wordnet
+    class CleanedTfIdf(TfIdf):
+        """overrides the default TfIdf class to only produces correctly spelled english language words.
+        instanciated here to prevent nltk dependancy unless needed"""
+        def get_tokens(self, str):
+            """overrides the default tokenizer to only used english language correctly spelled words
+            Break a string into tokens, preserving URL tags as an entire token.
+            This implementation does not preserve case.  
+            """
+            raw_tokens = re.findall(r"<a.*?/a>|<[^\>]*>|[\w'@#]+", str.lower())
+            return [t for t in raw_tokens if wordnet.synsets(t)]
+    comment_model = CleanedTfIdf(stopword_filename="stopwords.txt", 
+                            DEFAULT_IDF=None)
+else:
+    comment_model = TfIdf(stopword_filename="stopwords.txt", 
+                            DEFAULT_IDF=None)
+    
 if "--in-mem" in args or "-m" in args:
     #pop the arg
     if "--in-mem" in args:
@@ -43,8 +63,6 @@ try:
 except IndexError:
     top_idx = None
 
-comment_model = TfIdf(stopword_filename="stopwords.txt", 
-                        DEFAULT_IDF=None)
 if bottom_idx or top_idx:
     suffix = '_'
     if bottom_idx:
@@ -62,7 +80,7 @@ c.execute("SELECT id from beer")
 total_beers = len(list(c.fetchall()))
 print "idf will be built from the reviews of ", total_beers, "beers."
 
-c.execute("SELECT id, brewery FROM beer")
+c.execute("SELECT id, name FROM beer")
 idx = 0 #don't want to unwrap the generator so we'll idex this way
 worked = 0
 for beer_id, name in c.fetchall():
