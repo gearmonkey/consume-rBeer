@@ -8,7 +8,7 @@ from tfidf import TfIdf
 
 
 
-conn = sqlite3.connect('../rbeer.db')
+conn = sqlite3.connect('../data/rbeer.db')
 args = sys.argv
 if "--in-mem" in args or "-m" in args:
     #pop the arg
@@ -34,7 +34,7 @@ if "--in-mem" in args or "-m" in args:
 c = conn.cursor()
     
 try:
-    save_file = int(sys.argv[1])
+    save_file = sys.argv[1]
 except IndexError:
     save_file = 'pickled_tfidf.pickle'
 
@@ -43,8 +43,8 @@ print "saving to ", save_file
 with open(save_file, 'w') as wh:
     wh.write('0\n')
 
-comment_model = TfIdf(corpus_filename="idf_model.txt", stopword_filename="curated_stopwords.txt", 
-                        DEFAULT_IDF=1.5)
+comment_model = TfIdf(corpus_filename="idf_model_filteredsorted.txt", stopword_filename="curated_stopwords.txt", 
+                        DEFAULT_IDF=0.0000001) #if not in idf model, give very low score, since model is filtered
 
 #find the number of beers for progress indication
 c.execute("SELECT id from beer")
