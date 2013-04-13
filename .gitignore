@@ -1,1 +1,11 @@
 *.pyc
+*.txt
+*.db
+*.bak
+*.tsv
+*.pickle
+*.zip
+
+.DS_Store
+
+build
