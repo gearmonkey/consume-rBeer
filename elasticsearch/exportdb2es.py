@@ -34,6 +34,7 @@ def main(argv=None):
 
     conn = sqlite3.connect(args.database)
     conn.row_factory = sqlite3.Row
+    conn.text_factory = str
     c = conn.cursor()
     c.execute('SELECT count(*) from beer')
     to_insert = c.fetchone()['count(*)']
@@ -55,6 +56,16 @@ def main(argv=None):
         this_beer = dict(row)
         rbeer_id = this_beer.pop('id')
         this_beer['ratebeer_id'] = rbeer_id
+        this_beer['name'] = unicode(this_beer['name'], 'utf-8', 'replace')
+        if this_beer.has_key('clean_name') and this_beer['clean_name']!=None:
+            this_beer['clean_name'] = unicode(this_beer['clean_name'], 'utf-8', 'replace')
+        this_beer['brewery_name'] = ''
+        c.execute('SELECT rbid, name, url FROM brewery WHERE rbid={0}'.format(row['brewery']))
+        brewery_metadata = c.fetchone()
+        if brewery_metadata!=None:
+            #the encoding is a bit fucked...
+            this_beer['brewery_name'] = unicode(brewery_metadata['name'], 'utf-8', 'replace')
+            this_beer['brewery_url'] = unicode(brewery_metadata['url'], 'utf-8', 'replace')
         try:
             this_beer['topterms'] = [t for t in top_terms[int(row['id'])] if len(t[0]) > 2 and '@' not in t[0]]
         except KeyError:

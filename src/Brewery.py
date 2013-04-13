@@ -29,9 +29,9 @@ class Brewery:
             'full_address': re.compile(r'<br><br><a href =".*?" target="new"><b>(.*?)<BR>(.*?)</b> <img'),
             'region' : re.compile(r'&gt; <a href="/beer/brewers/">Brewers</a> &gt;.*?&gt; <a href="(.*?)">(.*?)</a> &gt;'),
             'country': re.compile(r'&gt; <a href="/beer/brewers/">Brewers</a> &gt; (<a.*?>)?(.*?)(</a>)? &gt;'), 
-            'url': re.compile(r'<br><small><A HREF="(?P<url>.*?)" TARGET=_blank>(?P=url)</A>'),
+            'url': re.compile(r'Web: <A HREF="(?P<url>.*?)" TARGET=_blank>.*?</A>'),
             'phone': re.compile(r'<IMG SRC="/images/phone.gif".*?>(.*?)<BR>'),
-            'fb_url': re.compile(r'\|</font> Facebook: <a href="(.*?)" target="_blank">.*?</a><BR>'), 
+            'fb_url': re.compile(r'Facebook: <a href="http://www.facebook.com/(.*?)" target="_blank">.*?</a>'), 
             'beers': re.compile(r'<TR class=dataTableRow.*?><TD width="65%" style="border-left: 0px solid #d7d7d7;"><font size=4>&nbsp;</font><A HREF="/beer/.*?/(?P<beerID>\d*?)/">(.*?)</A> &nbsp; </TD><TD valign=top>.*?</TD><TD align="right">(<font color=#999999>)?(.*?)(</font>&nbsp;&nbsp;)?</TD><TD>(<font color=#999999>&nbsp;&nbsp;)?(.*?)(</font>&nbsp;&nbsp;)?</TD><TD align=center>(<b>)?(\d*?)(</b>&nbsp;&nbsp;)?</TD><TD align=center>(<b>)?(\d*?)(</b>&nbsp;&nbsp;)?</TD><TD align="right">(<font color=#999999>)?(\d*?)(</font>&nbsp;&nbsp;)?</TD>')} 
     
     def __init__(self, name=None, full_address=None, region=None,
@@ -68,22 +68,28 @@ class Brewery:
         """
         if not raw_page:
             raw_page = self.fetch_page()
-        self.display_name = Brewery.regexes['name'].findall(raw_page)[0].strip()
-        self.brewer_type = Brewery.regexes['type'].findall(raw_page)[0].strip()
-        self.full_address = ','.join(Brewery.regexes['full_address'].findall(raw_page)[0])
+        self.display_name = unicode(Brewery.regexes['name'].findall(raw_page)[0].strip(), encoding='utf-8')
+        self.brewer_type = unicode(Brewery.regexes['type'].findall(raw_page)[0].strip(), encoding='utf-8')
+        self.full_address = unicode(','.join(Brewery.regexes['full_address'].findall(raw_page)[0]), encoding='utf-8')
         try:
-            self.region = Brewery.regexes['region'].findall(raw_page)[0][-1].strip()
+            self.region = unicode(Brewery.regexes['region'].findall(raw_page)[0][-1].strip(), encoding='utf-8')
         except IndexError:
             #if no region, leave it as None
             logging.warning('Unable to parse a region for {0}'.format(self.display_name))
-        self.country = Brewery.regexes['country'].findall(raw_page)[0][1].strip()
-        self.url = Brewery.regexes['url'].findall(raw_page)[0].strip()
-        self.phone = Brewery.regexes['phone'].findall(raw_page)[0].strip()
+        self.country = unicode(Brewery.regexes['country'].findall(raw_page)[0][1].strip(), encoding='utf-8')
         try:
-            self.fb_url = Brewery.regexes['fb_url'].findall(raw_page)[0]
+            self.url = unicode(Brewery.regexes['url'].findall(raw_page)[0].strip(), encoding='utf-8')
+        except IndexError:
+            logging.warning('Unable to parse a url for {0}'.format(self.display_name))
+        try:
+            self.phone = unicode(Brewery.regexes['phone'].findall(raw_page)[0].strip(), encoding='utf-8')
+        except IndexError:
+            logging.warning('Unable to parse a phone for {0}'.format(self.display_name))
+        try:
+            self.fb_url = unicode(Brewery.regexes['fb_url'].findall(raw_page)[0], encoding='utf-8')
         except IndexError:
             logging.warning('Unable to parse a facebook url for {0}'.format(self.display_name))
-        self.beers = self._populate_beer_list(Brewery.regexes['beers'].findall(raw_page))
+        #beers = self._populate_beer_list(Brewery.regexes['beers'].findall(raw_page))
         
     def _populate_beer_list(self, beer_tuples):
         """
