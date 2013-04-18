@@ -70,7 +70,11 @@ class Brewery:
             raw_page = self.fetch_page()
         self.display_name = unicode(Brewery.regexes['name'].findall(raw_page)[0].strip(), encoding='utf-8')
         self.brewer_type = unicode(Brewery.regexes['type'].findall(raw_page)[0].strip(), encoding='utf-8')
-        self.full_address = unicode(','.join(Brewery.regexes['full_address'].findall(raw_page)[0]), encoding='utf-8')
+        try:
+            self.full_address = unicode(','.join(Brewery.regexes['full_address'].findall(raw_page)[0]), encoding='utf-8')
+        except IndexError:
+            #if incomplete address, leave blank
+            logging.warning('Unable to parse full address for {0}'.format(self.display_name))
         try:
             self.region = unicode(Brewery.regexes['region'].findall(raw_page)[0][-1].strip(), encoding='utf-8')
         except IndexError:
