@@ -24,7 +24,7 @@ class Brewery:
     static Brewery.parse
     """
     brewery_uri = "http://ratebeer.com/brewers/brewer_name/{brewery_id}/"
-    regexes = {'name': re.compile(r'<h1>(.*?)</h1><span class=beerfoot>'),
+    regexes = {'name': re.compile(r'<span class=beerfoot>.*?<br><br></span><h1>(.*?)</h1>', flags=re.DOTALL),
             'type': re.compile(r'<font color="#666666">Type:(.*?)</font><br>'),
             'full_address': re.compile(r'<br><br><a href =".*?" target="new"><b>(.*?)<BR>(.*?)</b> <img'),
             'region' : re.compile(r'&gt; <a href="/beer/brewers/">Brewers</a> &gt;.*?&gt; <a href="(.*?)">(.*?)</a> &gt;'),
