@@ -25,7 +25,7 @@ class Beer(object):
     ratings_uri = "http://www.ratebeer.com/Ratings-Who.asp?BeerID={beer_id}"
     ratings_regex = re.compile(r'<a href="/ViewUser\.asp\?UserID=(?P<userid>\d*)" target="_blank">(.*?)</a> \(<i><a href="/beer/beer_name/(\d*)/(?P=userid)/" target="_blank">Rating - (.*?)</a></i>\)')
     
-    reviews_regex = re.compile(r'<IMG style="max-width: 60px; max-height: 60px; height: auto; width: auto;" width= "60" src="/userpics/(?P<username>\S*?)\.jpg" class="curvy"></div><div style="display:inline; padding: 0px 0px; font-size: 24px; font-weight: bold; color: #036;" title="(?P<rating>\d\.?\d?) out of 5\.0">(?P=rating)</div><strong>&nbsp;&nbsp;<small> AROMA </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> APPEARANCE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> TASTE </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> PALATE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> OVERALL </small><big style="color: #999;">(\d\d?)/20</big></strong></div><small style="color: #666666; font-size: 12px; font-weight: bold;"><A HREF="/user/(\d*?)/">(?P=username)&nbsp;\(\d*?\)</A></I> - (.*?) - ([A-Z]{3} \d\d?, \d{4}).*?</small><BR><div style="padding: 20px 10px 20px 0px; border-bottom: 1px solid #e0e0e0;">(.*?)</div>', flags=re.DOTALL)
+    reviews_regex = rev = re.compile(r'<div style="display:inline; padding: 0px 0px; font-size: 24px; font-weight: bold; color: #036;" title="(?P<rating>\d\.?\d?) out of 5\.0">(?P=rating)</div><strong>&nbsp;&nbsp;<small> AROMA </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> APPEARANCE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> TASTE </small><big style="color: #999;">(\d\d?)/10</big>&nbsp;&nbsp;<small> PALATE </small><big style="color: #999;">(\d)/5</big>&nbsp;&nbsp;<small> OVERALL </small><big style="color: #999;">(\d\d?)/20</big></strong></div><small style="color: #666666; font-size: 12px; font-weight: bold;"><A HREF="/user/(\d*?)/">(\S*?)&nbsp;\(\d*?\)</A></I> - (.*?) - ([A-Z]{3} \d\d?, \d{4}).*?</small><BR><div style="padding: 20px 10px 20px 0px; border-bottom: 1px solid #e0e0e0; line-height: 1\.5;">(.*?)</div><br>', flags=re.DOTALL)
     
     get_metadata = {'name': re.compile(r'<div class="user-header"><h1>(.*?)</h1></div>'),
                     'abv': re.compile(r'<abbr title="Alcohol By Volume">ABV</abbr>: <big style="color: #777;"><strong>(.*?)%</strong></big>'),
@@ -146,8 +146,8 @@ class Beer(object):
                                     taste_score=int(taste), palete_score=int(palete),
                                     overall_score=int(overall), user_loc=user_loc,
                                     date = datetime.datetime.strptime(date_str, '%b %d, %Y').date(),
-                                    comment = comment) for (username, topline_score, aroma, apperance, 
-                                                        taste, palete, overall, user_id, user_loc, 
+                                    comment = comment) for (topline_score, aroma, apperance, 
+                                                        taste, palete, overall, user_id, user_name, user_loc, 
                                                         date_str, comment) in \
                                                                 Beer.reviews_regex.findall(raw_page)]
             page += 1
