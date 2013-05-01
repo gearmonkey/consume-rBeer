@@ -14,18 +14,21 @@ logging.basicConfig(level=logging.DEBUG,
 conn = sqlite3.connect('rbeer.db')
 c = conn.cursor()
 
-c.execute('''create table beer
-(id integer primary key, brewery integer, name text, abv real, mean_score real,
-weighted_score real,overall_percentile real, style_percentile real,
-total_ratings integer, style_id integer)''')
-c.execute('''create table review
-(id integer primary key autoincrement, beer_uid integer NOT NULL, user_uid integer, 
-brewery_uid integer, topline_score integer, aroma_score integer, apperance_score integer,
-taste_score integer, palete_score integer, overall_score integer, location text, 
-user_location text, date integer, comment text)''')
-conn.commit()
+# ###DB schema###
+# c.execute('''CREATE TABLE beer
+# (id integer primary key, brewery integer, name text, abv real, mean_score real,
+# weighted_score real,overall_percentile real, style_percentile real,
+# total_ratings integer, style_id integer, beeradvocate_id char96, beeradvocate_mean_score float, 
+# untapped_id int, untappd_mean_score float, clean_name)''')
+# c.execute('''create table review
+# (id integer primary key autoincrement, beer_uid integer NOT NULL, user_uid integer, 
+# brewery_uid integer, topline_score integer, aroma_score integer, apperance_score integer,
+# taste_score integer, palete_score integer, overall_score integer, location text, 
+# user_location text, date integer, comment text)''')
+# conn.commit()
 
-for beer_id in xrange(1, NUM_BEERS):
+# for beer_id in xrange(1, NUM_BEERS): #range of beers
+for beer_id in (198874, 199216, 190724, 204737): #some specific ones
     logging.debug('fetching beer {0}'.format(beer_id))
     if beer_id%REPORT_EVERY == 0:
         logging.info('scrape is {0}% done.'.format(100*(float(beer_id)/NUM_BEERS)))
@@ -36,7 +39,8 @@ for beer_id in xrange(1, NUM_BEERS):
     except IndexError:
         logging.error('beer {0} doesn\'t work right, moving on'.format(beer_id))
         continue
-    c.execute('''insert into beer values (?,?,?,?,?,?,?,?,?,?)''', [a_beer.uid,
+    c.execute('''INSERT OR REPLACE INTO beer (id, brewery, name, abv, mean_score, weighted_score, overall_percentile, style_percentile,total_ratings, style_id) VALUES (?,?,?,?,?,?,?,?,?,?)''', [a_beer.uid,
+                                                                    a_beer.brewery_id,
                                                                     a_beer.name.decode('latin-1'),
                                                                     a_beer.abv, 
                                                                     a_beer.mean_score,
@@ -44,12 +48,11 @@ for beer_id in xrange(1, NUM_BEERS):
                                                                     a_beer.overall_percentile,
                                                                     a_beer.style_percentile,
                                                                     a_beer.total_ratings,
-                                                                    a_beer.brewery_id,
-                                                                    a_beer.style_id])
+                                                                    a_beer.style_id,])
     a_beer.scrape_user_comment_list(a_beer.page)
     for review in a_beer.reviews:
-        c.execute('''insert into review (beer_uid, user_uid, brewery_uid, topline_score, aroma_score, 
-        apperance_score, taste_score, palete_score, overall_score, user_location, date, comment) values     
+        c.execute('''INSERT OR REPLACE into review (beer_uid, user_uid, brewery_uid, topline_score, aroma_score, 
+        apperance_score, taste_score, palete_score, overall_score, user_location, date, comment) VALUES     
         (?,?,?,?,?,?,?,?,?,?,?,?)''',[review.beer_uid,
                                         review.user_uid, 
                                         review.brewery_uid,
