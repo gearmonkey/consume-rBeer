@@ -4,7 +4,7 @@ import logging
 
 import Beer
 
-NUM_BEERS = 168719 # total number of beers as of 13-03-2012 @2200GMT
+NUM_BEERS = 211699 # total number of beers as of 13-03-2012 @2200GMT
 REPORT_EVERY = 1000
 
 logging.basicConfig(level=logging.DEBUG, 
@@ -27,8 +27,13 @@ c = conn.cursor()
 # user_location text, date integer, comment text)''')
 # conn.commit()
 
-# for beer_id in xrange(1, NUM_BEERS): #range of beers
-for beer_id in (198874, 199216, 190724, 204737): #some specific ones
+#if not populating a new db, let's only get things we don't have in the database yet
+c.execute('SELECT DISTINCT id from beer')
+visited_beers = [b for (b,) in c.fetchall()]
+
+
+for beer_id in (b for b in xrange(1, NUM_BEERS) if not b in visited_beers): #range of beers
+# for beer_id in (198874, 199216, 190724, 204737): #some specific ones
     logging.debug('fetching beer {0}'.format(beer_id))
     if beer_id%REPORT_EVERY == 0:
         logging.info('scrape is {0}% done.'.format(100*(float(beer_id)/NUM_BEERS)))
