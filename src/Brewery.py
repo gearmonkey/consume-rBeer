@@ -68,31 +68,31 @@ class Brewery:
         """
         if not raw_page:
             raw_page = self.fetch_page()
-        self.display_name = unicode(Brewery.regexes['name'].findall(raw_page)[0].strip(), encoding='utf-8')
-        self.brewer_type = unicode(Brewery.regexes['type'].findall(raw_page)[0].strip(), encoding='utf-8')
+        self.display_name = unicode(Brewery.regexes['name'].findall(raw_page)[0].strip(), encoding='latin-1')
+        self.brewer_type = unicode(Brewery.regexes['type'].findall(raw_page)[0].strip(), encoding='latin-1')
         try:
-            self.full_address = unicode(','.join(Brewery.regexes['full_address'].findall(raw_page)[0]), encoding='utf-8')
+            self.full_address = unicode(','.join(Brewery.regexes['full_address'].findall(raw_page)[0]), encoding='latin-1')
         except IndexError:
             #if incomplete address, leave blank
-            logging.warning('Unable to parse full address for {0}'.format(self.display_name))
+            logging.warning(u'Unable to parse full address for {0}'.format(self.display_name))
         try:
-            self.region = unicode(Brewery.regexes['region'].findall(raw_page)[0][-1].strip(), encoding='utf-8')
+            self.region = unicode(Brewery.regexes['region'].findall(raw_page)[0][-1].strip(), encoding='latin-1')
         except IndexError:
             #if no region, leave it as None
-            logging.warning('Unable to parse a region for {0}'.format(self.display_name))
-        self.country = unicode(Brewery.regexes['country'].findall(raw_page)[0][1].strip(), encoding='utf-8')
+            logging.warning(u'Unable to parse a region for {0}'.format(self.display_name))
+        self.country = unicode(Brewery.regexes['country'].findall(raw_page)[0][1].strip(), encoding='latin-1')
         try:
-            self.url = unicode(Brewery.regexes['url'].findall(raw_page)[0].strip(), encoding='utf-8')
+            self.url = unicode(Brewery.regexes['url'].findall(raw_page)[0].strip(), encoding='latin-1')
         except IndexError:
-            logging.warning('Unable to parse a url for {0}'.format(self.display_name))
+            logging.warning(u'Unable to parse a url for {0}'.format(self.display_name))
         try:
-            self.phone = unicode(Brewery.regexes['phone'].findall(raw_page)[0].strip(), encoding='utf-8')
+            self.phone = unicode(Brewery.regexes['phone'].findall(raw_page)[0].strip(), encoding='latin-1')
         except IndexError:
-            logging.warning('Unable to parse a phone for {0}'.format(self.display_name))
+            logging.warning(u'Unable to parse a phone for {0}'.format(self.display_name))
         try:
-            self.fb_url = unicode(Brewery.regexes['fb_url'].findall(raw_page)[0], encoding='utf-8')
+            self.fb_url = unicode(Brewery.regexes['fb_url'].findall(raw_page)[0], encoding='latin-1')
         except IndexError:
-            logging.warning('Unable to parse a facebook url for {0}'.format(self.display_name))
+            logging.warning(u'Unable to parse a facebook url for {0}'.format(self.display_name))
         #beers = self._populate_beer_list(Brewery.regexes['beers'].findall(raw_page))
         
     def _populate_beer_list(self, beer_tuples):
