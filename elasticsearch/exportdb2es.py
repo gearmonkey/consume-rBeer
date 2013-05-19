@@ -14,7 +14,7 @@ import cPickle
 
 import pyelasticsearch
 
-
+token_stops = ('chocolate', 'coffee')
 
 
 class Usage(Exception):
@@ -23,7 +23,6 @@ class Usage(Exception):
 
 
 def main(argv=None):
-
     if argv is None:
         argv = sys.argv
     parser = argparse.ArgumentParser(description='Export an sqlite3 rbeer db to elasticsearch.')
@@ -68,13 +67,18 @@ def main(argv=None):
             this_beer['brewery_url'] = unicode(brewery_metadata['url'], 'utf-8', 'replace')
         try:
             this_beer['topterms'] = [t for t in top_terms[int(row['id'])] if len(t[0]) > 2 and '@' not in t[0]]
+            tokens = set(this_beer['brewery_name'].lower().split() + this_beer['name'].lower().split())
+            for token in (t for t in tokens if not t in token_stops):
+                if token in [t for (t,w) in this_beer['topterms']]:
+                    # print 'removing', token
+                    this_beer['topterms'] = [t for t in this_beer['topterms'] if t[0] != token]
         except KeyError:
             print 'no top terms for', row['name']
             this_beer['topterms'] = []
         bulk_beers.append(this_beer)
         if idx%500 == 0:
             es_client.bulk_index(es_index, 'beer',  bulk_beers, 'ratebeer_id')
-            print 'uploaded', idx/float(to_insert), 'percent of the beers'
+            print 'uploaded', 100*(idx/float(to_insert)), 'percent of the beers'
             bulk_beers = []
     es_client.bulk_index(es_index, 'beer', bulk_beers, 'ratebeer_id', refresh=True)
     print 'uploaded', idx/float(to_insert), 'percent of the beers'
