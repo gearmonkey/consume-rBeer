@@ -40,6 +40,13 @@ except IndexError:
 
 print "saving to ", save_file
 
+try:
+  with open(save_file) as rh:
+    top_100 = cPickle.load(rh)
+except IOError:
+  top_100 = {}
+print "proceeding with", len(top_100), "previous tfidf docs"
+
 with open(save_file, 'w') as wh:
     wh.write('0\n')
 
@@ -51,10 +58,9 @@ c.execute("SELECT id from beer")
 total_beers = len(list(c.fetchall()))
 print "calculating tfidf of ", total_beers, "beers."
 
-c.execute("SELECT id, brewery FROM beer")
+c.execute("SELECT id, name FROM beer")
 idx = 0 #don't want to unwrap the generator so we'll idex this way
 worked = 0
-top_100 = {}
 for beer_id, name in c.fetchall():
     if idx%1000 == 0:
         print """*-*-*-* Finished {0}% of the processing.""".format(float(idx)/total_beers)
@@ -66,6 +72,9 @@ for beer_id, name in c.fetchall():
     except:
         print "the beer", name, "has this id", beer_id, "which doesn't look like an int..."
         continue
+    if int(beer_id) in top_100.keys():
+      print "skipping", name, "as the tfidf already exists"
+      continue
     try:
         c.execute("SELECT comment FROM review WHERE beer_uid = {0}".format(beer_id))
     except Exception, err:
