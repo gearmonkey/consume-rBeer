@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='consume-rBeer',
+setup(name='consume_rBeer',
       version='0.1',
       description='Eating ratebeer for breakfast',
       author='Ben Fields',
