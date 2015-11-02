@@ -34,7 +34,7 @@ class Beer(object):
                     'overall_percentile': re.compile(r'<div style="font-size: 48px; font-weight: bold; color: #fff; padding: 7px 10px;" title="(\d?\d?\d\.?\d*?): This figure represents a beer\x92s performance relative to all beers on an adjusted percentile basis. Find out more in the FAQ.">'),
                     'style_percentile': re.compile(r'<div style="background-color: #66A212; position: relative; left: 0px; top: -20px; width: 67px; height: 67px; border-radius: 67px; z-index: -1;text-align: center;" title="(\d?\d?\d\.?\d*?): This figure represents a beer\x92s performance relative to its peers in the same beer style category on an adjusted percentile basis. Find out more in the FAQ.">'),
                     'total_ratings': re.compile(r'RATINGS: </abbr><big style="color: #777;"><b><span itemprop="reviewCount">(\d+)</span>'),
-                    'brewery_and_style': re.compile(r'<div style="padding-bottom: 7px; line-height: 1.5;"><big>Brewed by <b><a href="/brewers/.*?/(\d+)/">.*?</A></b></big><br>Style: <a href="/beerstyles/.*?/(\d+)/">.*?</a><br>.*?</div>')}
+                    'brewery_and_style': re.compile(r'<div style="padding-bottom: 7px; line-height: 1.5;"><big>(?:Brewed by )?<b><a href="/brewers/.*?/(\d+)/">.*?</A></b>(?:<br>Brewed at <a href="/brewers/.*/\d*/">.*</A>)?</big><br>Style: <a href="/beerstyles/.*?/(\d+)/">.*?</a><br>.*?</div>')}
     def __init__(self, beer_uid, name=None, abv=None, mean_score=None, overall_percentile=None,
                 style_percentile=None, total_ratings=None, brewery_id=None):
         self.uid = int(beer_uid)
